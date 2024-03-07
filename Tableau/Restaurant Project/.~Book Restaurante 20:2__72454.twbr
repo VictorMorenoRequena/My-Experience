@@ -737,7 +737,7 @@
           <field>[Ciudad]</field>
         </drill-path>
       </drill-paths>
-      <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' _.fcp.SchemaViewerObjectModel.true...common-percentage='0.966176' _.fcp.SchemaViewerObjectModel.true...user-set-layout-v2='true' dim-ordering='alphabetic' measure-ordering='alphabetic' parameter-percentage='0.0338235' show-structure='true' />
+      <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' _.fcp.SchemaViewerObjectModel.true...common-percentage='0.96467' _.fcp.SchemaViewerObjectModel.true...user-set-layout-v2='true' dim-ordering='alphabetic' measure-ordering='alphabetic' parameter-percentage='0.0353303' show-structure='true' />
       <semantic-values>
         <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
       </semantic-values>
@@ -753,8 +753,8 @@
         <field-sort-custom-order field='Posibles Ganancias' />
       </field-sort-info>
       <datasource-dependencies datasource='Parameters'>
-        <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Cava&quot;'>
-          <calculation class='tableau' formula='&quot;Cava&quot;' />
+        <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Champagne&quot;'>
+          <calculation class='tableau' formula='&quot;Champagne&quot;' />
         </column>
       </datasource-dependencies>
       <_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
@@ -870,8 +870,8 @@
     </datasource>
     <datasource hasconnection='false' inline='true' name='Parameters' version='18.1'>
       <aliases enabled='yes' />
-      <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Cava&quot;'>
-        <calculation class='tableau' formula='&quot;Cava&quot;' />
+      <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Champagne&quot;'>
+        <calculation class='tableau' formula='&quot;Champagne&quot;' />
         <members>
           <member value='&quot;Todos&quot;' />
           <member value='&quot;Cava&quot;' />
@@ -958,19 +958,37 @@
         <view>
           <datasources>
             <datasource caption='Ventas+ (Restaurante__Excels)' name='federated.1yfb1ty1kqcp1017ljsla1w0dfxd' />
+            <datasource name='Parameters' />
           </datasources>
+          <datasource-dependencies datasource='Parameters'>
+            <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Champagne&quot;'>
+              <calculation class='tableau' formula='&quot;Champagne&quot;' />
+            </column>
+          </datasource-dependencies>
           <datasource-dependencies datasource='federated.1yfb1ty1kqcp1017ljsla1w0dfxd'>
+            <column caption='Tipo de vino Simplificado' datatype='string' name='[Calculation_5098497053316657152]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='CASE [Parameters].[Parameter 1]&#10;   WHEN &apos;Todos&apos; THEN &apos;All Wines&apos;&#10;   WHEN &apos;Blanco&apos; THEN&#10;       IF CONTAINS([Tipo de Vino], &apos;Blanco&apos;) THEN &apos;Blancos&apos;&#10;       ELSE &apos;Other&apos;&#10;       END&#10;   WHEN &apos;Tinto&apos; THEN&#10;       IF CONTAINS([Tipo de Vino], &apos;Tinto&apos;) THEN &apos;Tintos&apos;&#10;       ELSE &apos;Other&apos;&#10;       END&#10;   ELSE [Tipo de Vino]  // Default case to catch all other types&#10;END' />
+            </column>
             <column datatype='real' name='[Margen %]' role='measure' type='quantitative' />
             <column datatype='string' name='[Nombre]' role='dimension' type='nominal' />
+            <column datatype='string' name='[Tipo de Vino]' role='dimension' type='nominal' />
+            <column-instance column='[Calculation_5098497053316657152]' derivation='None' name='[none:Calculation_5098497053316657152:nk]' pivot='key' type='nominal' />
             <column-instance column='[Nombre]' derivation='None' name='[none:Nombre:nk]' pivot='key' type='nominal' />
             <column-instance column='[Margen %]' derivation='Sum' name='[sum:Margen %:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
+          <filter class='categorical' column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Calculation_5098497053316657152:nk]'>
+            <groupfilter function='except' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='level-members' level='[none:Calculation_5098497053316657152:nk]' />
+              <groupfilter function='empty-level' member='[none:Calculation_5098497053316657152:nk]' />
+            </groupfilter>
+          </filter>
           <natural-sort column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Nombre:nk]' direction='ASC' />
           <filter class='quantitative' column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[sum:Margen %:qk]' included-values='in-range'>
             <min>129.37595129375953</min>
           </filter>
           <slices>
             <column>[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[sum:Margen %:qk]</column>
+            <column>[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Calculation_5098497053316657152:nk]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -996,8 +1014,8 @@
             <datasource name='Parameters' />
           </datasources>
           <datasource-dependencies datasource='Parameters'>
-            <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Cava&quot;'>
-              <calculation class='tableau' formula='&quot;Cava&quot;' />
+            <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Champagne&quot;'>
+              <calculation class='tableau' formula='&quot;Champagne&quot;' />
             </column>
           </datasource-dependencies>
           <datasource-dependencies datasource='federated.1yfb1ty1kqcp1017ljsla1w0dfxd'>
@@ -1018,9 +1036,7 @@
             </groupfilter>
           </filter>
           <filter class='categorical' column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Nombre:nk]'>
-            <groupfilter expression='CONTAINS([Nombre], &apos;La Ca&apos;)' function='filter' user:ui-enumeration='inclusive' user:ui-pattern-include-all-when-empty='true' user:ui-pattern_text='La Ca' user:ui-pattern_type='contains'>
-              <groupfilter function='level-members' level='[none:Nombre:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
-            </groupfilter>
+            <groupfilter function='level-members' level='[none:Nombre:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
           </filter>
           <filter class='quantitative' column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Precio de Venta:qk]' included-values='in-range'>
             <min>0.0</min>
@@ -1055,8 +1071,8 @@
             <datasource name='Parameters' />
           </datasources>
           <datasource-dependencies datasource='Parameters'>
-            <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Cava&quot;'>
-              <calculation class='tableau' formula='&quot;Cava&quot;' />
+            <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Champagne&quot;'>
+              <calculation class='tableau' formula='&quot;Champagne&quot;' />
             </column>
           </datasource-dependencies>
           <datasource-dependencies datasource='federated.1yfb1ty1kqcp1017ljsla1w0dfxd'>
@@ -1070,23 +1086,15 @@
             <column-instance column='[Tipo de Vino]' derivation='None' name='[none:Tipo de Vino:nk]' pivot='key' type='nominal' />
           </datasource-dependencies>
           <filter class='categorical' column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Calculation_5098497053316657152:nk]'>
-            <groupfilter function='empty-level' member='[none:Calculation_5098497053316657152:nk]' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
-          </filter>
-          <filter class='categorical' column='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Nombre:nk]'>
-            <groupfilter function='except' user:ui-domain='relevant' user:ui-enumeration='exclusive' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:Nombre:nk]' />
-              <groupfilter function='union'>
-                <groupfilter function='member' level='[none:Nombre:nk]' member='&quot;Emilio Moro crianza&quot;' />
-                <groupfilter function='member' level='[none:Nombre:nk]' member='&quot;Emilio moro finca realso&quot;' />
-                <groupfilter function='member' level='[none:Nombre:nk]' member='&quot;Emilio Moro malleolus&quot;' />
-              </groupfilter>
+            <groupfilter function='except' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate'>
+              <groupfilter function='level-members' level='[none:Calculation_5098497053316657152:nk]' />
+              <groupfilter function='empty-level' member='[none:Calculation_5098497053316657152:nk]' />
             </groupfilter>
           </filter>
           <_.fcp.SingleValuePerNestSorting.true...single-value-per-nest-shelf-sorts>
             <single-value-per-nest-shelf-sort dimension-to-sort='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Nombre:nk]' direction='DESC' measure-to-sort-by='[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Calculation_5098497053316657152:nk]' shelf='rows' />
           </_.fcp.SingleValuePerNestSorting.true...single-value-per-nest-shelf-sorts>
           <slices>
-            <column>[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Nombre:nk]</column>
             <column>[federated.1yfb1ty1kqcp1017ljsla1w0dfxd].[none:Calculation_5098497053316657152:nk]</column>
           </slices>
           <aggregation value='true' />
@@ -1115,8 +1123,8 @@
         <datasource caption='Ventas+ (Restaurante__Excels)' name='federated.1yfb1ty1kqcp1017ljsla1w0dfxd' />
       </datasources>
       <datasource-dependencies datasource='Parameters'>
-        <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Cava&quot;'>
-          <calculation class='tableau' formula='&quot;Cava&quot;' />
+        <column caption='Tipo de Vino' datatype='string' name='[Parameter 1]' param-domain-type='list' role='measure' type='nominal' value='&quot;Champagne&quot;'>
+          <calculation class='tableau' formula='&quot;Champagne&quot;' />
           <members>
             <member value='&quot;Todos&quot;' />
             <member value='&quot;Cava&quot;' />
@@ -1250,7 +1258,7 @@
       </cards>
       <simple-id uuid='{79892EB7-EEC8-4D8B-8DEE-E536C2EFF027}' />
     </window>
-    <window class='worksheet' name='Margen % Vinos'>
+    <window class='worksheet' maximized='true' name='Margen % Vinos'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -1309,10 +1317,10 @@
         <viewpoint name='Side Bar' />
         <viewpoint name='Todos los Vinos' />
       </viewpoints>
-      <active id='-1' />
+      <active id='11' />
       <simple-id uuid='{CBBAAC49-0D1E-4748-8505-453D7450A057}' />
     </window>
-    <window class='worksheet' maximized='true' name='Todos los Vinos'>
+    <window class='worksheet' name='Todos los Vinos'>
       <cards>
         <edge name='left'>
           <strip size='160'>
